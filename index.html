@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cara ou Coroa</title>
+  <style>
+    /* Estilos para centralizar o conteúdo */
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    #coin {
+      width: 200px;
+      height: 200px;
+      background-color: #fff;
+      border: 2px solid #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    #coin:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div id="coin">Clique aqui</div>
+  <script>
+    const coin = document.getElementById('coin');
+    coin.addEventListener('click', () => {
+      // Gera um número aleatório: se for menor que 0.5, mostra "Cara", caso contrário "Coroa"
+      const resultado = Math.random() < 0.5 ? 'Cara' : 'Coroa';
+      coin.textContent = resultado;
+    });
+  </script>
+</body>
+</html>
