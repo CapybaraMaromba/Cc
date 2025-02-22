@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // URL base do seu servidor API (está rodando localmente)
-  const baseURL = "http://127.0.0.1:4040";
+  const baseURL = "https://7d41-2804-fec-d315-1d00-9dab-61fa-1d72-c852.ngrok-free.app";
 
   // Seleção dos elementos da página
   const requestCodeBtn = document.getElementById("request-code-btn");
