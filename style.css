@@ -1,0 +1,64 @@
+/* Estilos Gerais */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* Cabeçalho e Rodapé */
+header, footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Conteúdo Principal */
+main {
+  padding: 2rem;
+}
+
+/* Botões (link e button) */
+.button, a.button {
+  background-color: #007BFF;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+button {
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  margin: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #28a745;
+  color: #fff;
+}
+
+button:hover, a.button:hover {
+  opacity: 0.9;
+}
+
+/* Seção do Jogo de Dados */
+.dice-game {
+  background-color: #fff;
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.dice-game h1 {
+  margin-bottom: 1rem;
+}
+
+.dice-game p {
+  font-size: 1.2rem;
+}
