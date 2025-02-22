@@ -1,64 +1,41 @@
-/* Estilos Gerais */
 body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #f0f0f0;
-  color: #333;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-/* Cabeçalho e Rodapé */
-header, footer {
-  background-color: #333;
-  color: #fff;
+div {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 400px;
+  width: 100%;
   text-align: center;
-  padding: 1rem;
 }
 
-/* Conteúdo Principal */
-main {
-  padding: 2rem;
-}
-
-/* Botões (link e button) */
-.button, a.button {
-  background-color: #007BFF;
-  color: #fff;
-  padding: 0.7rem 1.5rem;
-  text-decoration: none;
-  border-radius: 5px;
-  margin-top: 1rem;
-  display: inline-block;
+input[type="text"], textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 button {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  margin: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #28a745;
+  background-color: #007BFF;
   color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-button:hover, a.button:hover {
-  opacity: 0.9;
-}
-
-/* Seção do Jogo de Dados */
-.dice-game {
-  background-color: #fff;
-  max-width: 500px;
-  margin: 3rem auto;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-.dice-game h1 {
-  margin-bottom: 1rem;
-}
-
-.dice-game p {
-  font-size: 1.2rem;
+button:hover {
+  background-color: #0056b3;
 }
