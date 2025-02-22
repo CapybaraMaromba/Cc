@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("sessionId", sessionId);
   }
 
-  // URL base do seu servidor API (está rodando localmente)
+  // URL base do seu servidor API (ngrok)
   const baseURL = "https://0cce-2804-fec-d315-1d00-9dab-61fa-1d72-c852.ngrok-free.app";
 
   // Seleção dos elementos da página
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`${baseURL}/send_code`, {
         method: "POST",
+        mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session: sessionId })
       });
@@ -50,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`${baseURL}/login`, {
         method: "POST",
+        mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session: sessionId, code: code })
       });
@@ -78,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`${baseURL}/send_message`, {
         method: "POST",
+        mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: message })
       });
