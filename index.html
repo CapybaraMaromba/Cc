@@ -3,30 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio do Desenvolvedor</title>
+  <title>Login e Envio de Mensagens</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Bem-vindo ao Meu Portfolio</h1>
-  </header>
-  <main>
-    <section id="about">
-      <h2>Sobre Mim</h2>
-      <p>Sou um desenvolvedor apaixonado por tecnologia e inovação.</p>
-    </section>
-    <section id="projects">
-      <h2>Projetos</h2>
-      <p>Aqui você pode ver alguns dos meus trabalhos.</p>
-    </section>
-    <section id="game-link">
-      <h2>Desafio: Jogo de Dados</h2>
-      <p>Clique no botão abaixo para entrar no jogo de dados, onde o bot rola um número e você precisa tirar um número maior para vencer!</p>
-      <a class="button" href="dice.html">Jogar Dados</a>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2025 Meu Nome</p>
-  </footer>
+  <div id="login-section">
+    <h1>Login</h1>
+    <p>Para fazer login, clique em "Solicitar Código" e verifique o canal do Discord para o código.</p>
+    <button id="request-code-btn">Solicitar Código</button>
+    <div>
+      <input type="text" id="code-input" placeholder="Digite o código recebido">
+      <button id="login-btn">Login</button>
+    </div>
+    <p id="login-message"></p>
+  </div>
+  
+  <div id="message-section" style="display:none;">
+    <h1>Envie uma Mensagem</h1>
+    <textarea id="message-input" rows="4" cols="50" placeholder="Digite sua mensagem"></textarea>
+    <br>
+    <button id="send-message-btn">Enviar Mensagem</button>
+    <p id="send-message-status"></p>
+  </div>
+  
+  <script src="script.js"></script>
 </body>
 </html>
