@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // URL base do seu servidor API (está rodando localmente)
-  const baseURL = "http://localhost:8080";
+  const baseURL = "http://127.0.0.1:4040";
 
   // Seleção dos elementos da página
   const requestCodeBtn = document.getElementById("request-code-btn");
