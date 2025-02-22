@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Gere um identificador único de sessão e salve no localStorage
+  // Gera um identificador único de sessão e salva no localStorage
   let sessionId = localStorage.getItem("sessionId");
   if (!sessionId) {
     sessionId = Math.random().toString(36).substring(2, 15);
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // URL base do seu servidor API (ngrok)
-  const baseURL = "https://0cce-2804-fec-d315-1d00-9dab-61fa-1d72-c852.ngrok-free.app";
+  const baseURL = "https://stunning-lightly-tick.ngrok-free.app";
 
   // Seleção dos elementos da página
   const requestCodeBtn = document.getElementById("request-code-btn");
@@ -72,11 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Função para enviar mensagem para o canal do Discord
   sendMessageBtn.addEventListener("click", async () => {
-    const message = messageInput.value.trim();
-    if (!message) {
-      sendMessageStatus.textContent = "Digite uma mensagem.";
-      return;
-    }
+    // Se nenhum texto for inserido, envia a mensagem de teste
+    const message = messageInput.value.trim() || "Olá, essa é uma mensagem de teste!";
     try {
       const response = await fetch(`${baseURL}/send_message`, {
         method: "POST",
