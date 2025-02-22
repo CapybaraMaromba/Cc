@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Erro ao solicitar código:", error);
-      loginMessage.textContent = "Erro de comunicação com o servidor.";
+      loginMessage.textContent = "Erro de comunicação com o servidor. ERRO 01";
     }
   });
 
