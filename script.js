@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Erro ao tentar login:", error);
-      loginMessage.textContent = "Erro de comunicação com o servidor.";
+      loginMessage.textContent = "Erro de comunicação com o servidor. ERRO 02";
     }
   });
 
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
-      sendMessageStatus.textContent = "Erro de comunicação com o servidor.";
+      sendMessageStatus.textContent = "Erro de comunicação com o servidor. ERRO 04";
     }
   });
 });
