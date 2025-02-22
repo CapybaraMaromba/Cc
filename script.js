@@ -1,49 +1,96 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Seleciona os elementos da página
-  const botNumberElem = document.getElementById('bot-number');
-  const userNumberElem = document.getElementById('user-number');
-  const resultMessageElem = document.getElementById('result-message');
-  const playButton = document.getElementById('play-button');
-  const resetButton = document.getElementById('reset-button');
-
-  // Variável para armazenar o número do bot
-  let botNumber;
-
-  // Função para iniciar uma nova rodada
-  function startRound() {
-    // Gera um número aleatório para o bot (entre 1 e 6)
-    botNumber = Math.floor(Math.random() * 6) + 1;
-    botNumberElem.textContent = botNumber;
-    userNumberElem.textContent = '?';
-    resultMessageElem.textContent = '';
-    playButton.style.display = 'inline-block';
-    resetButton.style.display = 'none';
+document.addEventListener("DOMContentLoaded", () => {
+  // Gere um identificador único de sessão e salve no localStorage
+  let sessionId = localStorage.getItem("sessionId");
+  if (!sessionId) {
+    sessionId = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("sessionId", sessionId);
   }
 
-  // Função que executa quando o usuário joga
-  function userPlay() {
-    // Gera um número aleatório para o usuário (entre 1 e 6)
-    const userNumber = Math.floor(Math.random() * 6) + 1;
-    userNumberElem.textContent = userNumber;
+  // URL base do seu servidor API (está rodando localmente)
+  const baseURL = "http://localhost:8080";
 
-    // Compara os números e define o resultado
-    if (userNumber > botNumber) {
-      resultMessageElem.textContent = 'Você venceu!';
-    } else if (userNumber < botNumber) {
-      resultMessageElem.textContent = 'Você perdeu!';
-    } else {
-      resultMessageElem.textContent = 'Empate!';
+  // Seleção dos elementos da página
+  const requestCodeBtn = document.getElementById("request-code-btn");
+  const loginBtn = document.getElementById("login-btn");
+  const loginMessage = document.getElementById("login-message");
+  const codeInput = document.getElementById("code-input");
+  const loginSection = document.getElementById("login-section");
+  const messageSection = document.getElementById("message-section");
+  const sendMessageBtn = document.getElementById("send-message-btn");
+  const messageInput = document.getElementById("message-input");
+  const sendMessageStatus = document.getElementById("send-message-status");
+
+  // Função para solicitar o código de login
+  requestCodeBtn.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`${baseURL}/send_code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session: sessionId })
+      });
+      const data = await response.json();
+      if (data.status === "code sent") {
+        loginMessage.textContent = "Código enviado! Verifique o canal do Discord.";
+      } else {
+        loginMessage.textContent = "Erro ao enviar código.";
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+      loginMessage.textContent = "Erro de comunicação com o servidor.";
     }
+  });
 
-    // Oculta o botão de jogar e exibe o botão de reiniciar
-    playButton.style.display = 'none';
-    resetButton.style.display = 'inline-block';
-  }
+  // Função para efetuar o login
+  loginBtn.addEventListener("click", async () => {
+    const code = codeInput.value.trim();
+    if (!code) {
+      loginMessage.textContent = "Digite o código recebido.";
+      return;
+    }
+    try {
+      const response = await fetch(`${baseURL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session: sessionId, code: code })
+      });
+      const data = await response.json();
+      if (data.status === "login successful") {
+        loginMessage.textContent = "Login realizado com sucesso!";
+        // Esconde a seção de login e mostra a de envio de mensagem
+        loginSection.style.display = "none";
+        messageSection.style.display = "block";
+      } else {
+        loginMessage.textContent = "Código incorreto. Tente novamente.";
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+      loginMessage.textContent = "Erro de comunicação com o servidor.";
+    }
+  });
 
-  // Eventos dos botões
-  playButton.addEventListener('click', userPlay);
-  resetButton.addEventListener('click', startRound);
-
-  // Inicia a primeira rodada
-  startRound();
+  // Função para enviar mensagem para o canal do Discord
+  sendMessageBtn.addEventListener("click", async () => {
+    const message = messageInput.value.trim();
+    if (!message) {
+      sendMessageStatus.textContent = "Digite uma mensagem.";
+      return;
+    }
+    try {
+      const response = await fetch(`${baseURL}/send_message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: message })
+      });
+      const data = await response.json();
+      if (data.status === "message sent") {
+        sendMessageStatus.textContent = "Mensagem enviada com sucesso!";
+        messageInput.value = "";
+      } else {
+        sendMessageStatus.textContent = "Erro ao enviar mensagem.";
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+      sendMessageStatus.textContent = "Erro de comunicação com o servidor.";
+    }
+  });
 });
