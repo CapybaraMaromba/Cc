@@ -3,32 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login e Envio de Mensagens</title>
+  <title>Login, Cadastro e Área Segura</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Seção de Login -->
   <div id="login-section">
     <h1>Login</h1>
-    <p>
-      Para fazer login, insira seu ID do Discord, clique em "Solicitar Código" e verifique o canal do Discord para o código.
-    </p>
-    <div>
-      <input type="text" id="user-id" placeholder="Digite seu ID do Discord">
-    </div>
-    <button id="request-code-btn">Solicitar Código agora</button>
-    <div>
-      <input type="text" id="code-input" placeholder="Digite o código recebido">
-      <button id="login-btn">Login</button>
-    </div>
-    <p id="login-message"></p>
+    <input type="text" id="login-username" placeholder="Username">
+    <input type="password" id="login-password" placeholder="Senha">
+    <button id="login-btn">Entrar</button>
+    <p>Clique <a href="#" id="go-to-register">aqui</a> para se cadastrar</p>
   </div>
-  
-  <div id="message-section" style="display:none;">
+
+  <!-- Seção de Cadastro -->
+  <div id="registration-section" style="display: none;">
+    <h1>Cadastro</h1>
+    <input type="text" id="reg-username" placeholder="Username">
+    <input type="password" id="reg-password" placeholder="Senha">
+    <div>
+      <button id="send-reg-code-btn">Solicitar Código</button>
+    </div>
+    <input type="text" id="reg-code" placeholder="Digite o código recebido">
+    <button id="register-btn">Registrar</button>
+    <p>Clique <a href="#" id="go-to-login">aqui</a> para voltar ao login</p>
+  </div>
+
+  <!-- Seção Segura (após login) -->
+  <div id="secure-section" style="display: none;">
     <h1>Área Segura</h1>
-    <p id="send-message-status"></p>
-    <button id="get-saldo-btn">Consultar Saldo</button>
+    <p>Saldo: <span id="saldo-display"></span></p>
+    <button id="refresh-saldo-btn">Atualizar Saldo</button>
   </div>
-  
+
   <script src="script.js"></script>
 </body>
 </html>
