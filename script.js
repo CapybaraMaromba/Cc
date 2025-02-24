@@ -3,7 +3,7 @@ class SecureClient {
         this.sessionId = this.generateSessionId();
         this.ws = null;
         this.config = {
-            url: 'wss://SEU_SUBDOMINIO.ngrok-free.app/ws',
+            url: 'wss://stunning-lightly-tick.ngrok-free.app/ws',
             reconnectDelay: 5000,
             maxRetries: 3
         };
