@@ -9,7 +9,12 @@
 <body>
   <div id="login-section">
     <h1>Login</h1>
-    <p>Para fazer login, clique em "Solicitar Código" e verifique o canal do Discord para o código.</p>
+    <p>
+      Para fazer login, insira seu ID do Discord, clique em "Solicitar Código" e verifique o canal do Discord para o código.
+    </p>
+    <div>
+      <input type="text" id="user-id" placeholder="Digite seu ID do Discord">
+    </div>
     <button id="request-code-btn">Solicitar Código agora</button>
     <div>
       <input type="text" id="code-input" placeholder="Digite o código recebido">
@@ -19,11 +24,9 @@
   </div>
   
   <div id="message-section" style="display:none;">
-    <h1>Envie uma Mensagem</h1>
-    <textarea id="message-input" rows="4" cols="50" placeholder="Digite sua mensagem"></textarea>
-    <br>
-    <button id="send-message-btn">Enviar Mensagem</button>
+    <h1>Área Segura</h1>
     <p id="send-message-status"></p>
+    <button id="get-saldo-btn">Consultar Saldo</button>
   </div>
   
   <script src="script.js"></script>
