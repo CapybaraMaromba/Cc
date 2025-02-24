@@ -3,10 +3,11 @@ class SecureClient {
         this.sessionId = this.generateSessionId();
         this.ws = null;
         this.config = {
-            url: 'wss://stunning-lightly-tick.ngrok-free.app/ws',
+            url: 'wss://stunning-lightly-tick.ngrok-free.app/ws', // Altere para o seu endpoint
             reconnectDelay: 5000,
             maxRetries: 3
         };
+        this.token = null;
     }
 
     generateSessionId() {
@@ -29,81 +30,137 @@ class SecureClient {
         };
 
         this.ws.onclose = () => {
-            if (this.retryCount++ < this.config.maxRetries) {
+            if(this.retryCount++ < this.config.maxRetries) {
                 setTimeout(() => this.connect(), this.config.reconnectDelay);
             }
         };
     }
 
     handleResponse(data) {
-        if (data.token) {
-            localStorage.setItem('authToken', data.token);
-            this.showSecureInterface();
-        }
-        
-        if (data.error) {
+        console.log("Resposta:", data);
+        if(data.error) {
             this.showError(data.error);
         }
-        if (data.status) {
-            console.log('Status: ' + data.status);
+        if(data.status) {
+            console.log('Status:', data.status);
+            if(data.status === 'authenticated') {
+                this.token = data.token;
+                this.showSecureInterface();
+            }
+            if(data.status === 'registered') {
+                alert("Registro realizado com sucesso. Por favor, faça login.");
+                this.showLoginInterface();
+            }
+            if(data.status === 'code_sent') {
+                alert("Código enviado: " + data.code);
+            }
         }
-        if (data.saldo !== undefined) {
-            console.log('Saldo: ' + data.saldo);
-            document.getElementById('send-message-status').innerText = 'Saldo: ' + data.saldo;
+        if(data.saldo) {
+            document.getElementById('saldo-display').innerText = data.saldo;
         }
     }
 
-    sendCode() {
-        const userId = document.getElementById('user-id').value;
-        this.ws.send(JSON.stringify({
-            action: 'send_code',
+    // Envia requisição para solicitar o código de cadastro
+    sendRegCode() {
+        const username = document.getElementById('reg-username').value;
+        if (!username) {
+            alert("Informe o username.");
+            return;
+        }
+        const payload = {
+            action: 'send_reg_code',
             session: this.sessionId,
-            user_id: userId
-        }));
+            username: username
+        };
+        this.ws.send(JSON.stringify(payload));
     }
 
-    login(code) {
-        this.ws.send(JSON.stringify({
+    // Realiza o cadastro: envia username, senha e o código recebido
+    register() {
+        const username = document.getElementById('reg-username').value;
+        const password = document.getElementById('reg-password').value;
+        const code = document.getElementById('reg-code').value;
+        if(!username || !password || !code) {
+            alert("Preencha todos os campos para registro.");
+            return;
+        }
+        const payload = {
+            action: 'register',
+            session: this.sessionId,
+            username: username,
+            password: password,
+            code: code
+        };
+        this.ws.send(JSON.stringify(payload));
+    }
+
+    // Realiza login com username e senha
+    login() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        if(!username || !password) {
+            alert("Preencha todos os campos para login.");
+            return;
+        }
+        const payload = {
             action: 'login',
             session: this.sessionId,
-            code: code.toUpperCase()
-        }));
+            username: username,
+            password: password
+        };
+        this.ws.send(JSON.stringify(payload));
     }
 
+    // Solicita o saldo do usuário autenticado
     getSaldo() {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            this.ws.send(JSON.stringify({
-                action: 'get_saldo',
-                session: this.sessionId,
-                token: token
-            }));
+        if(!this.token) {
+            alert("Usuário não autenticado.");
+            return;
         }
+        const payload = {
+            action: 'get_saldo',
+            session: this.sessionId,
+            token: this.token
+        };
+        this.ws.send(JSON.stringify(payload));
     }
 
     showSecureInterface() {
         document.getElementById('login-section').style.display = 'none';
-        document.getElementById('message-section').style.display = 'block';
+        document.getElementById('registration-section').style.display = 'none';
+        document.getElementById('secure-section').style.display = 'block';
+        this.getSaldo();
+    }
+
+    showLoginInterface() {
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('registration-section').style.display = 'none';
+        document.getElementById('secure-section').style.display = 'none';
+    }
+
+    showRegistrationInterface() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('registration-section').style.display = 'block';
+        document.getElementById('secure-section').style.display = 'none';
     }
 
     showError(message) {
-        console.error(`Erro de segurança: ${message}`);
-        document.getElementById('login-message').innerText = message;
+        console.error("Erro:", message);
+        alert("Erro: " + message);
     }
 }
 
-// Inicialização
 const client = new SecureClient();
-document.getElementById('request-code-btn').onclick = () => client.sendCode();
-document.getElementById('login-btn').onclick = () => {
-    const code = document.getElementById('code-input').value;
-    client.login(code);
-};
-
-// Se desejar consultar o saldo, certifique-se de ter o botão com id 'get-saldo-btn'
-const getSaldoBtn = document.getElementById('get-saldo-btn');
-if (getSaldoBtn) {
-    getSaldoBtn.onclick = () => client.getSaldo();
-}
-
 client.connect();
+
+// Eventos para a tela de login
+document.getElementById('login-btn').onclick = () => client.login();
+document.getElementById('go-to-register').onclick = () => client.showRegistrationInterface();
+
+// Eventos para a tela de cadastro
+document.getElementById('send-reg-code-btn').onclick = () => client.sendRegCode();
+document.getElementById('register-btn').onclick = () => client.register();
+document.getElementById('go-to-login').onclick = () => client.showLoginInterface();
+
+// Evento para atualizar o saldo na tela segura
+document.getElementById('refresh-saldo-btn').onclick = () => client.getSaldo();
