@@ -1,102 +1,146 @@
+// client.js (Frontend Atualizado)
 document.addEventListener("DOMContentLoaded", () => {
-  // Gera um identificador único de sessão e salva no localStorage
-  let sessionId = localStorage.getItem("sessionId");
-  if (!sessionId) {
-    sessionId = Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("sessionId", sessionId);
-  }
-  console.log("Session ID:", sessionId);
-
-  // URL do WebSocket do seu servidor API (use ws:// ou wss:// conforme seu setup)
-  const wsURL = "wss://stunning-lightly-tick.ngrok-free.app/ws";
-
-  // Cria a conexão WebSocket
-  const ws = new WebSocket(wsURL);
-
-  // Seleção dos elementos da página
-  const requestCodeBtn = document.getElementById("request-code-btn");
-  const loginBtn = document.getElementById("login-btn");
-  const loginMessage = document.getElementById("login-message");
-  const codeInput = document.getElementById("code-input");
-  const loginSection = document.getElementById("login-section");
-  const messageSection = document.getElementById("message-section");
-  const sendMessageBtn = document.getElementById("send-message-btn");
-  const messageInput = document.getElementById("message-input");
-  const sendMessageStatus = document.getElementById("send-message-status");
-  
-  // Elementos opcionais para solicitar e exibir a última mensagem
-  const lastMessageBtn = document.getElementById("last-message-btn");
-  const lastMessageDisplay = document.getElementById("last-message-display");
-
-  ws.onopen = function() {
-    console.log("Conexão WebSocket estabelecida.");
-  };
-
-  ws.onmessage = function(event) {
-    console.log("Recebido do servidor:", event.data);
-    // Processa a resposta do servidor de acordo com o conteúdo da mensagem
-    if (event.data.includes("Código enviado")) {
-      loginMessage.textContent = event.data;
-    } else if (event.data.includes("Login realizado com sucesso")) {
-      loginMessage.textContent = event.data;
-      loginSection.style.display = "none";
-      messageSection.style.display = "block";
-    } else if (event.data.includes("Mensagem enviada")) {
-      sendMessageStatus.textContent = event.data;
-      messageInput.value = "";
-    } else if (event.data.includes("Última mensagem:")) {
-      if (lastMessageDisplay) {
-        lastMessageDisplay.textContent = event.data;
-      } else {
-        console.log("Última mensagem:", event.data);
-      }
-    } else {
-      // Para mensagens genéricas, apenas loga no console
-      console.log("Resposta do servidor:", event.data);
+    // Geração segura de Session ID
+    let sessionId = localStorage.getItem("sessionId");
+    if (!sessionId) {
+        const array = new Uint32Array(2);
+        window.crypto.getRandomValues(array);
+        sessionId = array[0].toString(36).padStart(6, '0') + array[1].toString(36).padStart(6, '0');
+        localStorage.setItem("sessionId", sessionId);
     }
-  };
 
-  ws.onerror = function(error) {
-    console.error("Erro na conexão WebSocket:", error);
-  };
+    // Configuração de conexão
+    const config = {
+        wsURL: "wss://seu-subdomínio.ngrok-free.app/ws",
+        reconnectInterval: 5000,
+        maxRetries: 5
+    };
 
-  ws.onclose = function() {
-    console.log("Conexão WebSocket fechada.");
-  };
+    // Elementos da UI
+    const ui = {
+        requestCodeBtn: document.getElementById("request-code-btn"),
+        loginBtn: document.getElementById("login-btn"),
+        codeInput: document.getElementById("code-input"),
+        loginSection: document.getElementById("login-section"),
+        messageSection: document.getElementById("message-section"),
+        statusMessage: document.getElementById("status-message"),
+        tokenExpiryWarning: document.getElementById("token-expiry-warning")
+    };
 
-  // Função para solicitar o código de login via WebSocket
-  requestCodeBtn.addEventListener("click", () => {
-    const requestData = { action: "send_code", session: sessionId };
-    console.log("Enviando solicitação de código via WebSocket:", requestData);
-    ws.send(JSON.stringify(requestData));
-  });
+    let ws;
+    let reconnectAttempts = 0;
+    let tokenCheckInterval;
 
-  // Função para efetuar o login via WebSocket
-  loginBtn.addEventListener("click", () => {
-    const code = codeInput.value.trim();
-    if (!code) {
-      loginMessage.textContent = "Digite o código recebido.";
-      return;
+    function connect() {
+        ws = new WebSocket(config.wsURL);
+
+        ws.onopen = () => {
+            reconnectAttempts = 0;
+            ui.statusMessage.textContent = "Conectado ao servidor";
+            checkTokenExpiry();
+        };
+
+        ws.onmessage = async (event) => {
+            const data = JSON.parse(event.data);
+            
+            if (data.token) {
+                localStorage.setItem("jwt", data.token);
+                ui.loginSection.style.display = "none";
+                ui.messageSection.style.display = "block";
+                startTokenExpiryCheck();
+            }
+            
+            if (data.error) {
+                showError(data.error);
+            }
+            
+            if (data.saldo) {
+                updateSaldoDisplay(data.saldo);
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error("Erro na conexão:", error);
+            ui.statusMessage.textContent = "Erro de conexão";
+        };
+
+        ws.onclose = () => {
+            if (reconnectAttempts < config.maxRetries) {
+                setTimeout(connect, config.reconnectInterval);
+                reconnectAttempts++;
+            }
+        };
     }
-    const requestData = { action: "login", session: sessionId, code: code };
-    console.log("Enviando requisição de login via WebSocket:", requestData);
-    ws.send(JSON.stringify(requestData));
-  });
 
-  // Função para enviar mensagem para o canal do Discord via WebSocket
-  sendMessageBtn.addEventListener("click", () => {
-    const message = messageInput.value.trim() || "Olá, essa é uma mensagem de teste!";
-    const requestData = { action: "send_message", message: message };
-    console.log("Enviando mensagem via WebSocket:", requestData);
-    ws.send(JSON.stringify(requestData));
-  });
+    function startTokenExpiryCheck() {
+        tokenCheckInterval = setInterval(() => {
+            const token = localStorage.getItem("jwt");
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const expiry = payload.exp * 1000;
+                const now = Date.now();
+                
+                if (expiry - now < 300000) { // 5 minutos antes da expiração
+                    ui.tokenExpiryWarning.style.display = "block";
+                }
+            }
+        }, 60000);
+    }
 
-  // Função para solicitar a última mensagem do chat via WebSocket (se os elementos existirem)
-  if (lastMessageBtn) {
-    lastMessageBtn.addEventListener("click", () => {
-      const requestData = { action: "última_mensagem" };
-      console.log("Solicitando a última mensagem via WebSocket:", requestData);
-      ws.send(JSON.stringify(requestData));
+    function checkTokenExpiry() {
+        const token = localStorage.getItem("jwt");
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.exp * 1000 < Date.now()) {
+                    localStorage.removeItem("jwt");
+                    ui.messageSection.style.display = "none";
+                    ui.loginSection.style.display = "block";
+                }
+            } catch (e) {
+                console.error("Erro ao verificar token:", e);
+            }
+        }
+    }
+
+    function showError(message) {
+        ui.statusMessage.textContent = message;
+        setTimeout(() => {
+            ui.statusMessage.textContent = "";
+        }, 5000);
+    }
+
+    // Event Listeners
+    ui.requestCodeBtn.addEventListener("click", () => {
+        const requestData = {
+            action: "send_code",
+            session: sessionId,
+            user_id: "ID_DO_USUARIO_DISCORD" // Substituir pelo ID real
+        };
+        ws.send(JSON.stringify(requestData));
     });
-  }
+
+    ui.loginBtn.addEventListener("click", () => {
+        const code = ui.codeInput.value.trim();
+        if (code.length !== 6) {
+            showError("Código deve ter 6 dígitos");
+            return;
+        }
+        
+        const requestData = {
+            action: "login",
+            session: sessionId,
+            code: code
+        };
+        ws.send(JSON.stringify(requestData));
+    });
+
+    // Conexão inicial
+    connect();
+
+    // Gerenciamento de token ao recarregar
+    window.addEventListener("beforeunload", () => {
+        if (ws) ws.close();
+        clearInterval(tokenCheckInterval);
+    });
 });
