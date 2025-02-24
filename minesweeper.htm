@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campo Minado</title>
+  <link rel="stylesheet" href="minesweeper.css">
+</head>
+<body>
+  <header>
+    <h1>Campo Minado</h1>
+  </header>
+  <main>
+    <div id="game-info">
+      <div>
+        <label for="bet">Valor da Aposta:</label>
+        <input type="number" id="bet" min="1" value="10">
+      </div>
+      <div>
+        <label for="mines">Quantidade de Minas:</label>
+        <input type="number" id="mines" min="1" max="35" value="5">
+      </div>
+      <button id="start-game">Iniciar Jogo</button>
+    </div>
+    <div id="game-board" class="board"></div>
+    <div id="game-message"></div>
+  </main>
+  <script src="minesweeper.js"></script>
+</body>
+</html>
