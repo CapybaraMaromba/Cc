@@ -68,7 +68,7 @@ class SecureClient {
   sendRegCode() {
     const username = document.getElementById('reg-username').value.trim();
     if (!username) {
-      alert("Informe o username (ex.: i.legend#1234).");
+      alert("Informe o username (ex.: i.legend).");
       return;
     }
     const payload = {
