@@ -7,29 +7,40 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Seção de Login -->
+  <!-- Tela de Login -->
   <div id="login-section">
     <h1>Login</h1>
-    <input type="text" id="login-username" placeholder="Username">
+    <input type="text" id="login-username" placeholder="Username (ex.: i.legend#1234)">
     <input type="password" id="login-password" placeholder="Senha">
     <button id="login-btn">Entrar</button>
     <p>Clique <a href="#" id="go-to-register">aqui</a> para se cadastrar</p>
   </div>
 
-  <!-- Seção de Cadastro -->
-  <div id="registration-section" style="display: none;">
-    <h1>Cadastro</h1>
-    <input type="text" id="reg-username" placeholder="Username">
-    <input type="password" id="reg-password" placeholder="Senha">
-    <div>
-      <button id="send-reg-code-btn">Solicitar Código</button>
-    </div>
-    <input type="text" id="reg-code" placeholder="Digite o código recebido">
-    <button id="register-btn">Registrar</button>
-    <p>Clique <a href="#" id="go-to-login">aqui</a> para voltar ao login</p>
+  <!-- Cadastro – Etapa 1: Solicitar Código -->
+  <div id="registration-step1" style="display: none;">
+    <h1>Cadastro – Etapa 1</h1>
+    <input type="text" id="reg-username" placeholder="Username (ex.: i.legend#1234)">
+    <button id="send-reg-code-btn">Solicitar Código</button>
   </div>
 
-  <!-- Seção Segura (após login) -->
+  <!-- Cadastro – Etapa 2: Verificar Código -->
+  <div id="registration-step2" style="display: none;">
+    <h1>Cadastro – Etapa 2</h1>
+    <p>Verifique sua DM no Discord para o código de verificação.</p>
+    <input type="text" id="reg-code" placeholder="Digite o código recebido">
+    <button id="verify-code-btn">Confirmar Código</button>
+    <p><a href="#" id="resend-code-link">Clique aqui para reenviar o código</a></p>
+  </div>
+
+  <!-- Cadastro – Etapa 3: Criar Senha -->
+  <div id="registration-step3" style="display: none;">
+    <h1>Cadastro – Etapa 3</h1>
+    <input type="password" id="reg-password" placeholder="Digite a senha">
+    <input type="password" id="reg-password-confirm" placeholder="Confirme a senha">
+    <button id="create-account-btn">Criar Conta</button>
+  </div>
+
+  <!-- Área Segura (após login) -->
   <div id="secure-section" style="display: none;">
     <h1>Área Segura</h1>
     <p>Saldo: <span id="saldo-display"></span></p>
