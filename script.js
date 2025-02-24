@@ -42,6 +42,8 @@ class SecureClient {
       console.log('Status:', data.status);
       if (data.status === 'authenticated') {
         this.token = data.token;
+        // Armazena o username para uso na tela segura
+        localStorage.setItem('username', document.getElementById('login-username').value.trim());
         this.showSecureInterface();
       }
       if (data.status === 'registered') {
@@ -58,6 +60,7 @@ class SecureClient {
       }
     }
     if (data.saldo) {
+      // Atualiza o saldo na barra superior
       document.getElementById('saldo-display').innerText = data.saldo;
     }
   }
@@ -149,11 +152,19 @@ class SecureClient {
   // ───────────── Controle de Telas ─────────────
 
   showSecureInterface() {
+    // Oculta as telas de login/cadastro
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('registration-step1').style.display = 'none';
     document.getElementById('registration-step2').style.display = 'none';
     document.getElementById('registration-step3').style.display = 'none';
+    // Exibe a tela segura (menu de minigames)
     document.getElementById('secure-section').style.display = 'block';
+    // Preenche os dados do usuário na barra superior
+    const username = localStorage.getItem('username') || document.getElementById('login-username').value;
+    document.getElementById('user-name').innerText = username;
+    // Define o avatar – aqui utilizamos uma imagem padrão; se desejar, pode integrar a API do Discord para obter a foto real
+    document.getElementById('user-avatar').src = 'default_avatar.png';
+    // Solicita o saldo atualizado
     this.getSaldo();
   }
 
@@ -207,5 +218,7 @@ document.getElementById('resend-code-link').onclick = (e) => {
 };
 document.getElementById('create-account-btn').onclick = () => client.createAccount();
 
-// Evento na área segura
-document.getElementById('refresh-saldo-btn').onclick = () => client.getSaldo();
+// Evento do card do minigame – redireciona para a página do minigame (ex.: minesweeper.html)
+document.getElementById('minesweeper-card').onclick = () => {
+  window.location.href = 'minesweeper.html';
+};
