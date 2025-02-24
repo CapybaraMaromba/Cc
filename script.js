@@ -1,146 +1,93 @@
-// client.js (Frontend Atualizado)
-document.addEventListener("DOMContentLoaded", () => {
-    // Geração segura de Session ID
-    let sessionId = localStorage.getItem("sessionId");
-    if (!sessionId) {
-        const array = new Uint32Array(2);
+class SecureClient {
+    constructor() {
+        this.sessionId = this.generateSessionId();
+        this.ws = null;
+        this.config = {
+            url: 'wss://SEU_SUBDOMINIO.ngrok-free.app/ws',
+            reconnectDelay: 5000,
+            maxRetries: 3
+        };
+    }
+
+    generateSessionId() {
+        const array = new Uint8Array(16);
         window.crypto.getRandomValues(array);
-        sessionId = array[0].toString(36).padStart(6, '0') + array[1].toString(36).padStart(6, '0');
-        localStorage.setItem("sessionId", sessionId);
+        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
-    // Configuração de conexão
-    const config = {
-        wsURL: "wss://seu-subdomínio.ngrok-free.app/ws",
-        reconnectInterval: 5000,
-        maxRetries: 5
-    };
-
-    // Elementos da UI
-    const ui = {
-        requestCodeBtn: document.getElementById("request-code-btn"),
-        loginBtn: document.getElementById("login-btn"),
-        codeInput: document.getElementById("code-input"),
-        loginSection: document.getElementById("login-section"),
-        messageSection: document.getElementById("message-section"),
-        statusMessage: document.getElementById("status-message"),
-        tokenExpiryWarning: document.getElementById("token-expiry-warning")
-    };
-
-    let ws;
-    let reconnectAttempts = 0;
-    let tokenCheckInterval;
-
-    function connect() {
-        ws = new WebSocket(config.wsURL);
-
-        ws.onopen = () => {
-            reconnectAttempts = 0;
-            ui.statusMessage.textContent = "Conectado ao servidor";
-            checkTokenExpiry();
+    connect() {
+        this.ws = new WebSocket(this.config.url);
+        
+        this.ws.onopen = () => {
+            console.log('Conexão segura estabelecida');
+            this.retryCount = 0;
         };
 
-        ws.onmessage = async (event) => {
-            const data = JSON.parse(event.data);
-            
-            if (data.token) {
-                localStorage.setItem("jwt", data.token);
-                ui.loginSection.style.display = "none";
-                ui.messageSection.style.display = "block";
-                startTokenExpiryCheck();
-            }
-            
-            if (data.error) {
-                showError(data.error);
-            }
-            
-            if (data.saldo) {
-                updateSaldoDisplay(data.saldo);
-            }
+        this.ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            this.handleResponse(data);
         };
 
-        ws.onerror = (error) => {
-            console.error("Erro na conexão:", error);
-            ui.statusMessage.textContent = "Erro de conexão";
-        };
-
-        ws.onclose = () => {
-            if (reconnectAttempts < config.maxRetries) {
-                setTimeout(connect, config.reconnectInterval);
-                reconnectAttempts++;
+        this.ws.onclose = () => {
+            if(this.retryCount++ < this.config.maxRetries) {
+                setTimeout(() => this.connect(), this.config.reconnectDelay);
             }
         };
     }
 
-    function startTokenExpiryCheck() {
-        tokenCheckInterval = setInterval(() => {
-            const token = localStorage.getItem("jwt");
-            if (token) {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const expiry = payload.exp * 1000;
-                const now = Date.now();
-                
-                if (expiry - now < 300000) { // 5 minutos antes da expiração
-                    ui.tokenExpiryWarning.style.display = "block";
-                }
-            }
-        }, 60000);
-    }
-
-    function checkTokenExpiry() {
-        const token = localStorage.getItem("jwt");
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                if (payload.exp * 1000 < Date.now()) {
-                    localStorage.removeItem("jwt");
-                    ui.messageSection.style.display = "none";
-                    ui.loginSection.style.display = "block";
-                }
-            } catch (e) {
-                console.error("Erro ao verificar token:", e);
-            }
-        }
-    }
-
-    function showError(message) {
-        ui.statusMessage.textContent = message;
-        setTimeout(() => {
-            ui.statusMessage.textContent = "";
-        }, 5000);
-    }
-
-    // Event Listeners
-    ui.requestCodeBtn.addEventListener("click", () => {
-        const requestData = {
-            action: "send_code",
-            session: sessionId,
-            user_id: "ID_DO_USUARIO_DISCORD" // Substituir pelo ID real
-        };
-        ws.send(JSON.stringify(requestData));
-    });
-
-    ui.loginBtn.addEventListener("click", () => {
-        const code = ui.codeInput.value.trim();
-        if (code.length !== 6) {
-            showError("Código deve ter 6 dígitos");
-            return;
+    handleResponse(data) {
+        if(data.token) {
+            localStorage.setItem('authToken', data.token);
+            this.showSecureInterface();
         }
         
-        const requestData = {
-            action: "login",
-            session: sessionId,
-            code: code
-        };
-        ws.send(JSON.stringify(requestData));
-    });
+        if(data.error) {
+            this.showError(data.error);
+        }
+    }
 
-    // Conexão inicial
-    connect();
+    sendCode() {
+        this.ws.send(JSON.stringify({
+            action: 'send_code',
+            session: this.sessionId
+        }));
+    }
 
-    // Gerenciamento de token ao recarregar
-    window.addEventListener("beforeunload", () => {
-        if (ws) ws.close();
-        clearInterval(tokenCheckInterval);
-    });
-});
+    login(code) {
+        this.ws.send(JSON.stringify({
+            action: 'login',
+            session: this.sessionId,
+            code: code.toUpperCase()
+        }));
+    }
+
+    getData() {
+        const token = localStorage.getItem('authToken');
+        if(token) {
+            this.ws.send(JSON.stringify({
+                action: 'get_data',
+                session: this.sessionId,
+                token: token
+            }));
+        }
+    }
+
+    showSecureInterface() {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('secureContent').style.display = 'block';
+    }
+
+    showError(message) {
+        console.error(`Erro de segurança: ${message}`);
+    }
+}
+
+// Inicialização
+const client = new SecureClient();
+document.getElementById('requestCode').onclick = () => client.sendCode();
+document.getElementById('loginBtn').onclick = () => {
+    const code = document.getElementById('codeInput').value;
+    client.login(code);
+};
+document.getElementById('getData').onclick = () => client.getData();
+client.connect();
