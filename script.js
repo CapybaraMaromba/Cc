@@ -29,27 +29,36 @@ class SecureClient {
         };
 
         this.ws.onclose = () => {
-            if(this.retryCount++ < this.config.maxRetries) {
+            if (this.retryCount++ < this.config.maxRetries) {
                 setTimeout(() => this.connect(), this.config.reconnectDelay);
             }
         };
     }
 
     handleResponse(data) {
-        if(data.token) {
+        if (data.token) {
             localStorage.setItem('authToken', data.token);
             this.showSecureInterface();
         }
         
-        if(data.error) {
+        if (data.error) {
             this.showError(data.error);
+        }
+        if (data.status) {
+            console.log('Status: ' + data.status);
+        }
+        if (data.saldo !== undefined) {
+            console.log('Saldo: ' + data.saldo);
+            document.getElementById('send-message-status').innerText = 'Saldo: ' + data.saldo;
         }
     }
 
     sendCode() {
+        const userId = document.getElementById('user-id').value;
         this.ws.send(JSON.stringify({
             action: 'send_code',
-            session: this.sessionId
+            session: this.sessionId,
+            user_id: userId
         }));
     }
 
@@ -61,11 +70,11 @@ class SecureClient {
         }));
     }
 
-    getData() {
+    getSaldo() {
         const token = localStorage.getItem('authToken');
-        if(token) {
+        if (token) {
             this.ws.send(JSON.stringify({
-                action: 'get_data',
+                action: 'get_saldo',
                 session: this.sessionId,
                 token: token
             }));
@@ -73,21 +82,28 @@ class SecureClient {
     }
 
     showSecureInterface() {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('secureContent').style.display = 'block';
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('message-section').style.display = 'block';
     }
 
     showError(message) {
         console.error(`Erro de segurança: ${message}`);
+        document.getElementById('login-message').innerText = message;
     }
 }
 
 // Inicialização
 const client = new SecureClient();
-document.getElementById('requestCode').onclick = () => client.sendCode();
-document.getElementById('loginBtn').onclick = () => {
-    const code = document.getElementById('codeInput').value;
+document.getElementById('request-code-btn').onclick = () => client.sendCode();
+document.getElementById('login-btn').onclick = () => {
+    const code = document.getElementById('code-input').value;
     client.login(code);
 };
-document.getElementById('getData').onclick = () => client.getData();
+
+// Se desejar consultar o saldo, certifique-se de ter o botão com id 'get-saldo-btn'
+const getSaldoBtn = document.getElementById('get-saldo-btn');
+if (getSaldoBtn) {
+    getSaldoBtn.onclick = () => client.getSaldo();
+}
+
 client.connect();
