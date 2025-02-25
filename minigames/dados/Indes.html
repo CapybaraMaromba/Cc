@@ -3,86 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login, Cadastro e Minigames</title>
+  <title>Test de Dados</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Tela de Login -->
-  <div id="login-section">
-    <h1>Login</h1>
-    <input type="text" id="login-username" placeholder="Username (ex.: i.legend)">
-    <input type="password" id="login-password" placeholder="Senha">
-    <button id="login-btn">Entrar</button>
-    <p>Clique <a href="#" id="go-to-register">aqui</a> para se cadastrar</p>
-  </div>
-
-  <!-- Cadastro – Etapa 1: Solicitar Código -->
-  <div id="registration-step1" style="display: none;">
-    <h1>Cadastro – Etapa 1</h1>
-    <input type="text" id="reg-username" placeholder="Username (ex.: i.legend)">
-    <button id="send-reg-code-btn">Solicitar Código</button>
-  </div>
-
-  <!-- Cadastro – Etapa 2: Verificar Código -->
-  <div id="registration-step2" style="display: none;">
-    <h1>Cadastro – Etapa 2</h1>
-    <p>Verifique sua DM no Discord para o código de verificação.</p>
-    <input type="text" id="reg-code" placeholder="Digite o código recebido">
-    <button id="verify-code-btn">Confirmar Código</button>
-    <p><a href="#" id="resend-code-link">Clique aqui para reenviar o código</a></p>
-  </div>
-
-  <!-- Cadastro – Etapa 3: Criar Senha -->
-  <div id="registration-step3" style="display: none;">
-    <h1>Cadastro – Etapa 3</h1>
-    <input type="password" id="reg-password" placeholder="Digite a senha">
-    <input type="password" id="reg-password-confirm" placeholder="Confirme a senha">
-    <button id="create-account-btn">Criar Conta</button>
-  </div>
-
-  <!-- Área Segura / Minigames -->
-  <div id="secure-section" style="display: none;">
-    <!-- Top Bar -->
+  <div id="game-container">
     <div id="top-bar">
-      <div id="user-profile">
-        <img id="user-avatar" src="default_avatar.png" alt="Avatar">
-        <span id="user-name"></span>
-      </div>
-      <div id="user-info-right">
-        <span id="saldo-display"></span>
-        <button id="dark-mode-toggle">🌙</button>
-      </div>
+      <button id="back-btn">← Voltar</button>
+      <h1>Test de Dados</h1>
     </div>
-    <!-- Minigames Grid -->
-    <div id="minigames-grid">
-      <div class="minigame-card" data-game="dados">
-        <img src="minigames/dados/img/dados.png" alt="Test de Dados">
-        <div class="card-overlay">
-          <span>Test de Dados</span>
-        </div>
-      </div>
-      <!-- Cards de minigames futuros -->
-      <div class="minigame-card">
-        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 2">
-        <div class="card-overlay">
-          <span>Minigame 2</span>
-        </div>
-      </div>
-      <div class="minigame-card">
-        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 3">
-        <div class="card-overlay">
-          <span>Minigame 3</span>
-        </div>
-      </div>
-      <div class="minigame-card">
-        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 4">
-        <div class="card-overlay">
-          <span>Minigame 4</span>
-        </div>
-      </div>
+    <div id="balance-display">Saldo: <span id="saldo"></span></div>
+    <div id="game-area">
+      <input type="number" id="bet-input" placeholder="Valor da aposta">
+      <button id="play-btn">Jogar</button>
+      <div id="result-display"></div>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
