@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login, Cadastro e Área Segura</title>
+  <title>Login, Cadastro e Minigames</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -40,23 +40,46 @@
     <button id="create-account-btn">Criar Conta</button>
   </div>
 
-  <!-- Área Segura (após login) – Menu de Minigames -->
+  <!-- Área Segura / Minigames -->
   <div id="secure-section" style="display: none;">
-    <div class="top-bar">
-      <div class="user-info">
+    <!-- Top Bar -->
+    <div id="top-bar">
+      <div id="user-profile">
         <img id="user-avatar" src="default_avatar.png" alt="Avatar">
         <span id="user-name"></span>
       </div>
-      <div class="user-saldo">
+      <div id="user-info-right">
         <span id="saldo-display"></span>
+        <button id="dark-mode-toggle">🌙</button>
       </div>
     </div>
-    <div class="minigame-grid">
-      <div class="minigame-card" id="minesweeper-card">
-        <img src="minesweeper.png" alt="Campo Minado">
-        <div class="card-overlay">Campo Minado</div>
+    <!-- Minigames Grid -->
+    <div id="minigames-grid">
+      <div class="minigame-card" data-game="dados">
+        <img src="minigames/dados/img/dados.png" alt="Test de Dados">
+        <div class="card-overlay">
+          <span>Test de Dados</span>
+        </div>
       </div>
-      <!-- Se desejar, adicione outros cards para outros minigames -->
+      <!-- Cards de minigames futuros -->
+      <div class="minigame-card">
+        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 2">
+        <div class="card-overlay">
+          <span>Minigame 2</span>
+        </div>
+      </div>
+      <div class="minigame-card">
+        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 3">
+        <div class="card-overlay">
+          <span>Minigame 3</span>
+        </div>
+      </div>
+      <div class="minigame-card">
+        <img src="minigames/placeholder/img/placeholder.png" alt="Minigame 4">
+        <div class="card-overlay">
+          <span>Minigame 4</span>
+        </div>
+      </div>
     </div>
   </div>
 
