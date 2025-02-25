@@ -3,11 +3,12 @@ class SecureClient {
     this.sessionId = this.generateSessionId();
     this.ws = null;
     this.config = {
-      url: 'wss://stunning-lightly-tick.ngrok-free.app/ws', // Altere para o seu endpoint
+      url: 'wss://stunning-lightly-tick.ngrok-free.app/ws', // 
       reconnectDelay: 5000,
       maxRetries: 3
     };
     this.token = null;
+    this.username = "";
   }
 
   generateSessionId() {
@@ -42,8 +43,7 @@ class SecureClient {
       console.log('Status:', data.status);
       if (data.status === 'authenticated') {
         this.token = data.token;
-        // Armazena o username para uso na tela segura
-        localStorage.setItem('username', document.getElementById('login-username').value.trim());
+        this.username = document.getElementById('login-username').value.trim();
         this.showSecureInterface();
       }
       if (data.status === 'registered') {
@@ -60,14 +60,12 @@ class SecureClient {
       }
     }
     if (data.saldo) {
-      // Atualiza o saldo na barra superior
       document.getElementById('saldo-display').innerText = data.saldo;
     }
   }
 
   // ───────────── Cadastro ─────────────
 
-  // Etapa 1: Solicitar código via backend
   sendRegCode() {
     const username = document.getElementById('reg-username').value.trim();
     if (!username) {
@@ -82,7 +80,6 @@ class SecureClient {
     this.ws.send(JSON.stringify(payload));
   }
 
-  // Etapa 2: Verificar o código recebido via DM
   verifyRegCode() {
     const username = document.getElementById('reg-username').value.trim();
     const code = document.getElementById('reg-code').value.trim();
@@ -99,7 +96,6 @@ class SecureClient {
     this.ws.send(JSON.stringify(payload));
   }
 
-  // Etapa 3: Criar a conta com senha
   createAccount() {
     const username = document.getElementById('reg-username').value.trim();
     const password = document.getElementById('reg-password').value;
@@ -118,7 +114,7 @@ class SecureClient {
     this.ws.send(JSON.stringify(payload));
   }
 
-  // ───────────── Login e Consulta de Saldo ─────────────
+  // ───────────── Login ─────────────
 
   login() {
     const username = document.getElementById('login-username').value.trim();
@@ -136,35 +132,17 @@ class SecureClient {
     this.ws.send(JSON.stringify(payload));
   }
 
-  getSaldo() {
-    if (!this.token) {
-      alert("Usuário não autenticado.");
-      return;
-    }
-    const payload = {
-      action: 'get_saldo',
-      session: this.sessionId,
-      token: this.token
-    };
-    this.ws.send(JSON.stringify(payload));
-  }
-
-  // ───────────── Controle de Telas ─────────────
+  // ───────────── Interface Controls ─────────────
 
   showSecureInterface() {
-    // Oculta as telas de login/cadastro
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('registration-step1').style.display = 'none';
     document.getElementById('registration-step2').style.display = 'none';
     document.getElementById('registration-step3').style.display = 'none';
-    // Exibe a tela segura (menu de minigames)
     document.getElementById('secure-section').style.display = 'block';
-    // Preenche os dados do usuário na barra superior
-    const username = localStorage.getItem('username') || document.getElementById('login-username').value;
-    document.getElementById('user-name').innerText = username;
-    // Define o avatar – aqui utilizamos uma imagem padrão; se desejar, pode integrar a API do Discord para obter a foto real
-    document.getElementById('user-avatar').src = 'default_avatar.png';
-    // Solicita o saldo atualizado
+    // Preenche informações do usuário na top bar
+    document.getElementById('user-name').innerText = this.username;
+    // Se desejado, implementar chamada à API do Discord para obter o avatar; usamos o default.
     this.getSaldo();
   }
 
@@ -200,6 +178,31 @@ class SecureClient {
     console.error("Erro:", message);
     alert("Erro: " + message);
   }
+
+  // Consulta de saldo
+  getSaldo() {
+    if (!this.token) {
+      alert("Usuário não autenticado.");
+      return;
+    }
+    const payload = {
+      action: 'get_saldo',
+      session: this.sessionId,
+      token: this.token
+    };
+    this.ws.send(JSON.stringify(payload));
+  }
+
+  // Dark mode toggle
+  toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('dark-mode-toggle');
+    if (document.body.classList.contains('dark-mode')) {
+      btn.innerText = '☀️';
+    } else {
+      btn.innerText = '🌙';
+    }
+  }
 }
 
 const client = new SecureClient();
@@ -218,7 +221,17 @@ document.getElementById('resend-code-link').onclick = (e) => {
 };
 document.getElementById('create-account-btn').onclick = () => client.createAccount();
 
-// Evento do card do minigame – redireciona para a página do minigame (ex.: minesweeper.html)
-document.getElementById('minesweeper-card').onclick = () => {
-  window.location.href = 'minesweeper.html';
-};
+// Evento do dark mode toggle
+document.getElementById('dark-mode-toggle').onclick = () => client.toggleDarkMode();
+
+// Evento de clique nos cards de minigames
+document.querySelectorAll('.minigame-card').forEach(card => {
+  card.onclick = () => {
+    const game = card.getAttribute('data-game');
+    if (game === 'dados') {
+      window.location.href = 'minigames/dados/index.html?session=' + client.sessionId + '&token=' + client.token;
+    } else {
+      alert("Minigame ainda não implementado.");
+    }
+  };
+});
