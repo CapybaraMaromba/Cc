@@ -3,7 +3,7 @@ class SecureClient {
     this.sessionId = this.generateSessionId();
     this.ws = null;
     this.config = {
-      url: 'wss://stunning-lightly-tick.ngrok-free.app/ws', // 
+      url: 'wss://stunning-lightly-tick.ngrok-free.app/ws', // Endpoint para login/cadastro
       reconnectDelay: 5000,
       maxRetries: 3
     };
@@ -65,7 +65,6 @@ class SecureClient {
   }
 
   // ───────────── Cadastro ─────────────
-
   sendRegCode() {
     const username = document.getElementById('reg-username').value.trim();
     if (!username) {
@@ -115,7 +114,6 @@ class SecureClient {
   }
 
   // ───────────── Login ─────────────
-
   login() {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
@@ -133,7 +131,6 @@ class SecureClient {
   }
 
   // ───────────── Interface Controls ─────────────
-
   showSecureInterface() {
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('registration-step1').style.display = 'none';
@@ -229,6 +226,7 @@ document.querySelectorAll('.minigame-card').forEach(card => {
   card.onclick = () => {
     const game = card.getAttribute('data-game');
     if (game === 'dados') {
+      // Redireciona para a página do minigame "Test de Dados"
       window.location.href = 'minigames/dados/index.html?session=' + client.sessionId + '&token=' + client.token;
     } else {
       alert("Minigame ainda não implementado.");
