@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #f2f2f2;
@@ -7,8 +8,15 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
 }
 
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* Container Divs */
 div {
   background-color: #fff;
   padding: 20px;
@@ -19,7 +27,11 @@ div {
   text-align: center;
 }
 
-/* Inputs e botões mantêm-se os mesmos */
+.dark-mode div {
+  background-color: #1e1e1e;
+}
+
+/* Inputs and Buttons */
 input[type="text"],
 input[type="password"],
 textarea {
@@ -43,6 +55,7 @@ button:hover {
   background-color: #0056b3;
 }
 
+/* Links */
 a {
   color: #007BFF;
   text-decoration: none;
@@ -52,69 +65,90 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ────── Estilos para a tela segura (menu de minigames) ────── */
-.top-bar {
+/* Top Bar Styles */
+#top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 10px 15px;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
 }
 
-.user-info {
+.dark-mode #top-bar {
+  background: rgba(30, 30, 30, 0.7);
+}
+
+#user-profile {
   display: flex;
   align-items: center;
 }
 
-.user-info img {
+#user-profile img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  margin-right: 10px;
   object-fit: cover;
+}
+
+#user-info-right {
+  display: flex;
+  align-items: center;
+}
+
+#user-info-right span {
   margin-right: 10px;
 }
 
-.user-saldo {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-/* Grid de minigames */
-.minigame-grid {
+/* Minigames Grid */
+#minigames-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
 }
 
-/* Card de minigame */
+/* Minigame Card */
 .minigame-card {
   position: relative;
-  border: 1px solid #ccc;
+  cursor: pointer;
   border-radius: 8px;
   overflow: hidden;
-  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: transform 0.2s;
 }
 
 .minigame-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px);
 }
 
 .minigame-card img {
   width: 100%;
-  display: block;
+  height: 150px;
+  object-fit: cover;
 }
 
 .card-overlay {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   padding: 5px;
   background: rgba(255, 255, 255, 0.6);
-  text-align: center;
-  font-weight: bold;
   backdrop-filter: blur(5px);
+  text-align: center;
+}
+
+.dark-mode .card-overlay {
+  background: rgba(30, 30, 30, 0.6);
+}
+
+/* Ajusta o container da Área Segura */
+#secure-section {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: none;
+  background: transparent;
 }
