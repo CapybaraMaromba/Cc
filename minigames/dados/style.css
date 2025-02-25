@@ -1,0 +1,66 @@
+/* Estilos básicos para o Test de Dados */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#game-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#top-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#top-bar button {
+  margin-right: auto;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#balance-display {
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+#game-area input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#game-area button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#game-area button:hover {
+  background-color: #218838;
+}
+
+#result-display {
+  margin-top: 20px;
+  font-size: 16px;
+}
