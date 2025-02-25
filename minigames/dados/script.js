@@ -4,7 +4,8 @@
   const session = urlParams.get('session');
   const token = urlParams.get('token');
 
-  const wsUrl = 'wss://stunning-lightly-tick.ngrok-free.app:8182/ws'; // Altere conforme necessário
+  // Altere para: wss://stunning-lightly-tick.ngrok-free.app/ws/dados
+  const wsUrl = 'wss://stunning-lightly-tick.ngrok-free.app/ws/dados';
   let ws;
 
   function connect() {
